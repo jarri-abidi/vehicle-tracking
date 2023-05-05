@@ -1,4 +1,4 @@
-package karma
+package karma_test
 
 import (
 	"context"
@@ -9,23 +9,24 @@ import (
 	"os"
 	"testing"
 
+	"github.com/jarri-abidi/vehicle-tracking/karma"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestFetchTrips(t *testing.T) {
-	f, err := os.Open("fetch_trips_sample.json")
+	f, err := os.Open("trips_sample.json")
 	require.NoError(t, err)
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var req FetchTripsRequest
+		var req karma.FetchTripsRequest
 		require.NoError(t, json.NewDecoder(r.Body).Decode(&req))
-		assert.Equal(t, cmdTrips, req.Cmd)
+		assert.Equal(t, karma.CmdTrips, req.Cmd)
 
 		_, err := io.Copy(w, f)
 		require.NoError(t, err)
 	}))
 
-	_, err = FetchTrips(context.TODO(), srv.URL, FetchTripsRequest{Cmd: cmdTrips})
+	_, err = karma.FetchTrips(context.TODO(), srv.URL, karma.FetchTripsRequest{Cmd: karma.CmdTrips})
 	require.NoError(t, err)
 }

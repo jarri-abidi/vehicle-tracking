@@ -5,18 +5,7 @@
 
 package gen
 
-import (
-	"context"
-	"time"
-)
-
-const insertTrips = `-- name: InsertTrips :exec
-INSERT INTO trips (
-    trip_id, car_id, driver_id, car_number, device_id, trip_active, start_message_id, start_date, 
-    start_latitude, start_longitude, start_odo, stop_message_id, stop_date, stop_latitude, stop_longitude, 
-    stop_odo, trip_duration, trip_distance, trip_duration_night, trip_distance_night
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
-`
+import ()
 
 type InsertTripsParams struct {
 	TripID            string
@@ -26,43 +15,17 @@ type InsertTripsParams struct {
 	DeviceID          string
 	TripActive        int32
 	StartMessageID    string
-	StartDate         time.Time
-	StartLatitude     string
-	StartLongitude    string
-	StartOdo          string
+	StartDate         string
+	StartLatitude     float64
+	StartLongitude    float64
+	StartOdo          float64
 	StopMessageID     string
-	StopDate          time.Time
-	StopLatitude      string
-	StopLongitude     string
-	StopOdo           string
+	StopDate          string
+	StopLatitude      float64
+	StopLongitude     float64
+	StopOdo           float64
 	TripDuration      int32
-	TripDistance      string
+	TripDistance      float64
 	TripDurationNight int32
 	TripDistanceNight int32
-}
-
-func (q *Queries) InsertTrips(ctx context.Context, arg InsertTripsParams) error {
-	_, err := q.db.ExecContext(ctx, insertTrips,
-		arg.TripID,
-		arg.CarID,
-		arg.DriverID,
-		arg.CarNumber,
-		arg.DeviceID,
-		arg.TripActive,
-		arg.StartMessageID,
-		arg.StartDate,
-		arg.StartLatitude,
-		arg.StartLongitude,
-		arg.StartOdo,
-		arg.StopMessageID,
-		arg.StopDate,
-		arg.StopLatitude,
-		arg.StopLongitude,
-		arg.StopOdo,
-		arg.TripDuration,
-		arg.TripDistance,
-		arg.TripDurationNight,
-		arg.TripDistanceNight,
-	)
-	return err
 }

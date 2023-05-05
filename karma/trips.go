@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const cmdTrips = "trips"
+const CmdTrips = "trips"
 
 type FetchTripsRequest struct {
 	Cmd string `json:"cmd"`
@@ -21,11 +21,11 @@ type FetchTripsResponse struct {
 
 type Trip struct {
 	TripID            string  `json:"trip_id"`
-	CarID             int     `json:"car_id"`
-	DriverID          int     `json:"driver_id"`
+	CarID             int32   `json:"car_id"`
+	DriverID          int32   `json:"driver_id"`
 	CarNumber         string  `json:"car_number"`
 	DeviceID          string  `json:"device_id"`
-	TripActive        int     `json:"trip_active"`
+	TripActive        int32   `json:"trip_active"`
 	StartMessageID    string  `json:"start_message_id"`
 	StartDate         string  `json:"start_date"`
 	StartLatitude     float64 `json:"start_latitude"`
@@ -36,10 +36,10 @@ type Trip struct {
 	StopLatitude      float64 `json:"stop_latitude"`
 	StopLongitude     float64 `json:"stop_longitude"`
 	StopOdo           float64 `json:"stop_odo"`
-	TripDuration      int     `json:"trip_duration"`
+	TripDuration      int32   `json:"trip_duration"`
 	TripDistance      float64 `json:"trip_distance"`
-	TripDurationNight int     `json:"trip_duration_night"`
-	TripDistanceNight int     `json:"trip_distance_night"`
+	TripDurationNight int32   `json:"trip_duration_night"`
+	TripDistanceNight int32   `json:"trip_distance_night"`
 }
 
 func FetchTrips(ctx context.Context, url string, req FetchTripsRequest) (*FetchTripsResponse, error) {

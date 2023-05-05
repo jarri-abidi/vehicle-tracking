@@ -1,4 +1,4 @@
--- name: InsertTrips :exec
+-- name: InsertTrips :copyfrom
 INSERT INTO trips (
     trip_id, car_id, driver_id, car_number, device_id, trip_active, start_message_id, start_date, 
     start_latitude, start_longitude, start_odo, stop_message_id, stop_date, stop_latitude, stop_longitude, 

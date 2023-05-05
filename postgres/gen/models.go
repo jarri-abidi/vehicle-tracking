@@ -4,9 +4,7 @@
 
 package gen
 
-import (
-	"time"
-)
+import ()
 
 type Trip struct {
 	TripID            string
@@ -16,17 +14,17 @@ type Trip struct {
 	DeviceID          string
 	TripActive        int32
 	StartMessageID    string
-	StartDate         time.Time
-	StartLatitude     string
-	StartLongitude    string
-	StartOdo          string
+	StartDate         string
+	StartLatitude     float64
+	StartLongitude    float64
+	StartOdo          float64
 	StopMessageID     string
-	StopDate          time.Time
-	StopLatitude      string
-	StopLongitude     string
-	StopOdo           string
+	StopDate          string
+	StopLatitude      float64
+	StopLongitude     float64
+	StopOdo           float64
 	TripDuration      int32
-	TripDistance      string
+	TripDistance      float64
 	TripDurationNight int32
 	TripDistanceNight int32
 }
