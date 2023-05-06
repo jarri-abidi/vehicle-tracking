@@ -2,11 +2,52 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
+	"log"
+	"strings"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 	"github.com/jarri-abidi/vehicle-tracking/karma"
 	"github.com/jarri-abidi/vehicle-tracking/postgres/gen"
+	"github.com/pkg/errors"
 )
+
+const dbName = "karma"
+
+func pgConnectionString(host, port, user, pgPassword string, options ...string) string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?%s", user, pgPassword, host, port, dbName, strings.Join(options, "&"))
+}
+
+func Migrate(migrationURL, host, port, user, password string, options ...string) error {
+	db, err := sql.Open("postgres", pgConnectionString(host, port, user, password, options...))
+	if err != nil {
+		return errors.Wrap(err, "could not open postgres connection")
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("close error:", err)
+		}
+	}()
+	driver, err := postgres.WithInstance(db, &postgres.Config{MultiStatementEnabled: true})
+	if err != nil {
+		return errors.Wrap(err, "could not create postgres driver instance")
+	}
+
+	migration, err := migrate.NewWithDatabaseInstance(migrationURL, dbName, driver)
+	if err != nil {
+		return errors.Wrap(err, "could not create migration instance")
+	}
+
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		return errors.Wrap(err, "failed to run migrate up")
+	}
+
+	return nil
+}
 
 func StoreTrips(ctx context.Context, conn *pgx.Conn, trips []karma.Trip) error {
 	queries := gen.New(conn)
