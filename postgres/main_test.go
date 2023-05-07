@@ -20,13 +20,12 @@ func TestMain(m *testing.M) {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	pool, err := dockertest.NewPool("")
 	if err != nil {
-		log.Fatalf("Could not construct pool: %s", err)
+		log.Fatalf("Could not construct pool: %v", err)
 	}
 
 	// uses pool to try to connect to Docker
-	err = pool.Client.Ping()
-	if err != nil {
-		log.Fatalf("Could not connect to Docker: %s", err)
+	if err = pool.Client.Ping(); err != nil {
+		log.Fatalf("Could not connect to docker: %v", err)
 	}
 
 	container, err := pool.RunWithOptions(&dockertest.RunOptions{
@@ -45,32 +44,34 @@ func TestMain(m *testing.M) {
 			Name: "no",
 		}
 	})
+	if err != nil {
+		log.Fatalf("Could not start docker container: %v", err)
+	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	if err := pool.Retry(func() error {
+	if err = pool.Retry(func() error {
 		var err error
 		conn, err = pgx.Connect(context.Background(), fmt.Sprintf("postgres://test:test@127.0.0.1:%s/karma?sslmode=disable", container.GetPort("5432/tcp")))
 		if err != nil {
 			return err
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 		defer cancel()
 		return conn.Ping(ctx)
 	}); err != nil {
-		log.Fatalf("Could not connect to database: %s", err)
+		log.Fatalf("Could not connect to database: %v", err)
 	}
 
-	err = postgres.Migrate("file://migrations", "127.0.0.1", container.GetPort("5432/tcp"), "test", "test", "sslmode=disable")
-	if err != nil {
-		log.Fatalf("could not perform migrations: %s", err)
+	if err = postgres.Migrate("file://migrations", "127.0.0.1", container.GetPort("5432/tcp"), "test", "test", "sslmode=disable"); err != nil {
+		log.Fatalf("could not perform migrations: %v", err)
 	}
 
 	code := m.Run()
 
-	// You can't defer this because os.Exit doesn't care for defer
+	// can't defer this because os.Exit doesn't care for defer
 	if err := pool.Purge(container); err != nil {
-		log.Fatalf("Could not purge resource: %s", err)
+		log.Fatalf("Could not purge resource: %v", err)
 	}
 
 	os.Exit(code)

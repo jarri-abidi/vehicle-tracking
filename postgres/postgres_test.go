@@ -3,6 +3,7 @@ package postgres_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -51,5 +52,10 @@ func generateTrips(opts ...optTrips) []karma.Trip {
 
 func TestStoreTrips(t *testing.T) {
 	err := postgres.StoreTrips(context.TODO(), conn, generateTrips())
+	require.NoError(t, err)
+
+	f, err := os.Create("trips.csv")
+	require.NoError(t, err)
+	_, err = conn.PgConn().CopyTo(context.TODO(), f, "COPY trips TO stdout")
 	require.NoError(t, err)
 }
