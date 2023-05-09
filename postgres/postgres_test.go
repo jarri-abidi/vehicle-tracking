@@ -16,10 +16,10 @@ import (
 
 type optTrips func(trips *[]karma.Trip)
 
-func generateTrips(tripsCount int32, opts ...optTrips) []karma.Trip {
+func generateTrips(count int32, opts ...optTrips) []karma.Trip {
 	var idCounter int32
-	var trips = make([]karma.Trip, 0, tripsCount)
-	for idCounter <= tripsCount {
+	var trips = make([]karma.Trip, 0, count)
+	for idCounter <= count {
 		idCounter++
 		trips = append(trips, karma.Trip{
 			TripID:            fmt.Sprintf("tripid-%d", idCounter),
@@ -61,11 +61,11 @@ func TestStoreTrips(t *testing.T) {
 	_, err = conn.PgConn().CopyTo(context.TODO(), &buf, "COPY (SELECT json_agg(row_to_json(trips)) FROM trips) TO stdout")
 	require.NoError(t, err)
 
-	gotTrips := make([]karma.Trip, 0, len(trips))
-	err = json.NewDecoder(&buf).Decode(&gotTrips)
+	res := make([]karma.Trip, 0, len(trips))
+	err = json.NewDecoder(&buf).Decode(&res)
 	require.NoError(t, err)
 
-	assert.Equal(t, trips, gotTrips)
+	assert.Equal(t, trips, res)
 }
 
 func BenchmarkStoreTrips(b *testing.B) {
