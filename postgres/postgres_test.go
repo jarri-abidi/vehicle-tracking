@@ -1,23 +1,25 @@
 package postgres_test
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/jarri-abidi/vehicle-tracking/karma"
 	"github.com/jarri-abidi/vehicle-tracking/postgres"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 type optTrips func(trips *[]karma.Trip)
 
-func generateTrips(opts ...optTrips) []karma.Trip {
+func generateTrips(tripsCount int32, opts ...optTrips) []karma.Trip {
 	var idCounter int32
-	var trips = make([]karma.Trip, 0, 3)
-	for idCounter <= 3 {
+	var trips = make([]karma.Trip, 0, tripsCount)
+	for idCounter <= tripsCount {
 		idCounter++
 		trips = append(trips, karma.Trip{
 			TripID:            fmt.Sprintf("tripid-%d", idCounter),
@@ -51,11 +53,25 @@ func generateTrips(opts ...optTrips) []karma.Trip {
 }
 
 func TestStoreTrips(t *testing.T) {
-	err := postgres.StoreTrips(context.TODO(), conn, generateTrips())
+	trips := generateTrips(1000)
+	err := postgres.StoreTrips(context.TODO(), conn, trips)
 	require.NoError(t, err)
 
-	f, err := os.Create("trips.csv")
+	var buf bytes.Buffer
+	_, err = conn.PgConn().CopyTo(context.TODO(), &buf, "COPY (SELECT json_agg(row_to_json(trips)) FROM trips) TO stdout")
 	require.NoError(t, err)
-	_, err = conn.PgConn().CopyTo(context.TODO(), f, "COPY trips TO stdout")
+
+	gotTrips := make([]karma.Trip, 0, len(trips))
+	err = json.NewDecoder(&buf).Decode(&gotTrips)
 	require.NoError(t, err)
+
+	assert.Equal(t, trips, gotTrips)
+}
+
+func BenchmarkStoreTrips(b *testing.B) {
+	trips := generateTrips(50000)
+
+	for i := 0; i < b.N; i++ {
+		require.NoError(b, postgres.StoreTrips(context.TODO(), conn, trips))
+	}
 }
