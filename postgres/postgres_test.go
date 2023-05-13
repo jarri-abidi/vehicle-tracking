@@ -68,6 +68,11 @@ func TestStoreTrips(t *testing.T) {
 	assert.Equal(t, trips, res)
 }
 
+// goos: linux
+// goarch: amd64
+// pkg: github.com/jarri-abidi/vehicle-tracking/postgres
+// cpu: Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz
+// BenchmarkStoreTrips-4   	       5	 883662450 ns/op	38482932 B/op	  619525 allocs/op
 func BenchmarkStoreTrips(b *testing.B) {
 	trips := generateTrips(50000)
 
