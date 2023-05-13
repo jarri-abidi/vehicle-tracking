@@ -4,4 +4,4 @@ encrypt:
 	sops --encrypt --age $(PUBLIC_KEY) secret.env > .env
 
 decrypt:
-	sops --decrypt .env
+	sops --decrypt .env > secret.env
