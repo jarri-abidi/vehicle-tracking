@@ -42,16 +42,17 @@ type Trip struct {
 	TripDistanceNight int32   `json:"trip_distance_night"`
 }
 
-func FetchTrips(ctx context.Context, url string, req FetchTripsRequest) (*FetchTripsResponse, error) {
+func (c *Client) FetchTrips(ctx context.Context, req FetchTripsRequest) (*FetchTripsResponse, error) {
 	buf, err := json.Marshal(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not marshal request")
 	}
 
-	resp, err := http.Post(url, "application/json", bytes.NewReader(buf))
+	resp, err := http.Post(c.URL, "application/json", bytes.NewReader(buf))
 	if err != nil {
 		return nil, errors.Wrap(err, "could not send http request")
 	}
+	defer resp.Body.Close()
 
 	var fetchTripsResponse FetchTripsResponse
 	if err := json.NewDecoder(resp.Body).Decode(&fetchTripsResponse); err != nil {

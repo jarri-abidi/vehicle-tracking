@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=metabase
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=vehicle-tracking
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+  metabase:
+    container_name: metabase
+    image: "metabase/metabase:latest"
+    ports:
+      - 3000:3000
+    volumes:
+      - ./metabase-data:/metabase-data
+    depends_on:
+      - postgres

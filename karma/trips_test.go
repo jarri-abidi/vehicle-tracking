@@ -27,6 +27,7 @@ func TestFetchTrips(t *testing.T) {
 		require.NoError(t, err)
 	}))
 
-	_, err = karma.FetchTrips(context.TODO(), srv.URL, karma.FetchTripsRequest{Cmd: karma.CmdTrips})
+	c := karma.Client{URL: srv.URL}
+	_, err = c.FetchTrips(context.TODO(), karma.FetchTripsRequest{Cmd: karma.CmdTrips})
 	require.NoError(t, err)
 }
