@@ -19,7 +19,7 @@ func main() {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
+defer f.Close()
 		w.Header().Add("Content-Type", "application/json")
 		_, err = io.Copy(w, f)
 		if err != nil {
