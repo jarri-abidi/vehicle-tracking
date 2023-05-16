@@ -54,7 +54,8 @@ func generateTrips(count int32, opts ...optTrips) []karma.Trip {
 
 func TestStoreTrips(t *testing.T) {
 	trips := generateTrips(1000)
-	err := postgres.StoreTrips(context.TODO(), conn, trips)
+	repo := postgres.Repository{Conn: conn}
+	err := repo.StoreTrips(context.TODO(), trips)
 	require.NoError(t, err)
 
 	var buf bytes.Buffer
@@ -75,8 +76,9 @@ func TestStoreTrips(t *testing.T) {
 // BenchmarkStoreTrips-4   	       5	 883662450 ns/op	38482932 B/op	  619525 allocs/op
 func BenchmarkStoreTrips(b *testing.B) {
 	trips := generateTrips(50000)
+	repo := postgres.Repository{Conn: conn}
 
 	for i := 0; i < b.N; i++ {
-		require.NoError(b, postgres.StoreTrips(context.TODO(), conn, trips))
+		require.NoError(b, repo.StoreTrips(context.TODO(), trips))
 	}
 }

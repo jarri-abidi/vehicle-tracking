@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -30,11 +31,11 @@ func TestMain(m *testing.M) {
 
 	container, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "postgres",
-		Tag:        "11",
+		Tag:        "alpine",
 		Env: []string{
 			"POSTGRES_USER=test",
 			"POSTGRES_PASSWORD=test",
-			"POSTGRES_DB=karma",
+			"POSTGRES_DB=vehicle-tracking",
 			"listen_addresses = '*'",
 		},
 	}, func(config *docker.HostConfig) {
@@ -48,10 +49,13 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not start docker container: %v", err)
 	}
 
+	options := []string{"sslmode=disable"}
+	connString := fmt.Sprintf("postgres://test:test@localhost:%s/vehicle-tracking?%s", container.GetPort("5432/tcp"), strings.Join(options, "&"))
+
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err = pool.Retry(func() error {
 		var err error
-		conn, err = pgx.Connect(context.Background(), fmt.Sprintf("postgres://test:test@127.0.0.1:%s/karma?sslmode=disable", container.GetPort("5432/tcp")))
+		conn, err = pgx.Connect(context.Background(), connString)
 		if err != nil {
 			return err
 		}
@@ -63,7 +67,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
 
-	if err = postgres.Migrate("file://migrations", "127.0.0.1", container.GetPort("5432/tcp"), "test", "test", "sslmode=disable"); err != nil {
+	if err = postgres.Migrate("file://migrations", connString); err != nil {
 		log.Fatalf("could not perform migrations: %v", err)
 	}
 

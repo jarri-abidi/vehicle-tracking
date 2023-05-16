@@ -1,1 +1,3 @@
 secret.env
+pgdata/
+metabase-data/
