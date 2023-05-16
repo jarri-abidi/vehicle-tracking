@@ -14,20 +14,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFetchTrips(t *testing.T) {
-	f, err := os.Open("testdata/trips_sample.json")
+func TestFetchLocation(t *testing.T) {
+	f, err := os.Open("testdata/location_sample.json")
 	require.NoError(t, err)
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var req karma.FetchTripsRequest
+		var req karma.FetchLocationRequest
 		require.NoError(t, json.NewDecoder(r.Body).Decode(&req))
-		assert.Equal(t, karma.CmdTrips, req.Cmd)
+		assert.Equal(t, karma.CmdLocation, req.Cmd)
 
 		_, err := io.Copy(w, f)
 		require.NoError(t, err)
 	}))
 
 	c := karma.Client{URL: srv.URL}
-	_, err = c.FetchTrips(context.TODO(), karma.FetchTripsRequest{Cmd: karma.CmdTrips})
+	_, err = c.FetchLocation(context.TODO(), karma.FetchLocationRequest{Cmd: karma.CmdLocation})
 	require.NoError(t, err)
 }

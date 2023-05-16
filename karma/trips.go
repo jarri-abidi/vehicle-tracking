@@ -16,10 +16,10 @@ type FetchTripsRequest struct {
 }
 
 type FetchTripsResponse struct {
-	Data []Trip `json:"data"`
+	Data []TripData `json:"data"`
 }
 
-type Trip struct {
+type TripData struct {
 	TripID            string  `json:"trip_id"`
 	CarID             int32   `json:"car_id"`
 	DriverID          int32   `json:"driver_id"`
