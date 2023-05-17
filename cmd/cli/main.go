@@ -45,5 +45,9 @@ func run(karmaURL, pgConnString string) error {
 		return errors.Wrap(err, "could not sync trips")
 	}
 
+	if err := svc.SyncLocations(ctx); err != nil {
+		return errors.Wrap(err, "could not sync locations")
+	}
+
 	return nil
 }

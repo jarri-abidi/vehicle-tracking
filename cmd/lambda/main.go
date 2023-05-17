@@ -34,5 +34,9 @@ func handler(ctx context.Context) error {
 		return errors.Wrap(err, "could not sync trips")
 	}
 
+	if err := svc.SyncLocations(ctx); err != nil {
+		return errors.Wrap(err, "could not sync trips")
+	}
+
 	return nil
 }
