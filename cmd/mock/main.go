@@ -1,33 +1,42 @@
 package main
 
 import (
+	"context"
 	"flag"
-	"io"
-	"log"
 	"net/http"
 	"os"
+	"os/signal"
+
+	"github.com/go-kit/log"
 )
 
 func main() {
+	logger := log.NewJSONLogger(os.Stderr)
+	defer logger.Log("msg", "terminated")
+
 	addr := flag.String("addr", ":56000", "listen addr")
 	flag.Parse()
 
-	if err := http.ListenAndServe(*addr, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		f, err := os.Open("karma/trips_sample.json")
-		if err != nil {
-			log.Printf("could not read file: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	mux := http.NewServeMux()
+	mux.Handle("/", NewMockServer())
+	server := &http.Server{
+		Addr:    *addr,
+		Handler: mux,
+	}
 
-		w.Header().Add("Content-Type", "application/json")
-		_, err = io.Copy(w, f)
-		if err != nil {
-			log.Printf("could not write to response writer: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+
+	go func() {
+		logger.Log("transport", "http", "address", *addr, "msg", "listening")
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+			logger.Log("transport", "http", "address", *addr, "msg", "failed", "err", err)
+			sig <- os.Interrupt // trigger shutdown of other resources
 		}
-	})); err != nil {
-		log.Fatal("could not serve http: ", err)
+	}()
+
+	logger.Log("received", <-sig, "msg", "terminating")
+	if err := server.Shutdown(context.Background()); err != nil {
+		logger.Log("msg", "could not shutdown http mock server", "err", err)
 	}
 }
