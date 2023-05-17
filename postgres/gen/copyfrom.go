@@ -9,6 +9,49 @@ import (
 	"context"
 )
 
+// iteratorForInsertLocations implements pgx.CopyFromSource.
+type iteratorForInsertLocations struct {
+	rows                 []InsertLocationsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForInsertLocations) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForInsertLocations) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].MessageID,
+		r.rows[0].CarID,
+		r.rows[0].Carnumber,
+		r.rows[0].DeviceID,
+		r.rows[0].Extra,
+		r.rows[0].Edt,
+		r.rows[0].Eid,
+		r.rows[0].Latitude,
+		r.rows[0].Longitude,
+		r.rows[0].Head,
+		r.rows[0].Odo,
+		r.rows[0].Alt,
+	}, nil
+}
+
+func (r iteratorForInsertLocations) Err() error {
+	return nil
+}
+
+func (q *Queries) InsertLocations(ctx context.Context, arg []InsertLocationsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"locations"}, []string{"message_id", "car_id", "carnumber", "device_id", "extra", "edt", "eid", "latitude", "longitude", "head", "odo", "alt"}, &iteratorForInsertLocations{rows: arg})
+}
+
 // iteratorForInsertTrips implements pgx.CopyFromSource.
 type iteratorForInsertTrips struct {
 	rows                 []InsertTripsParams

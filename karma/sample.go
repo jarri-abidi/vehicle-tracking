@@ -48,15 +48,15 @@ func SampleLocations(numLocations int) []LocationData {
 	for i := 0; i < numLocations; i++ {
 		location := LocationData{
 			MessageID: generateRandomString(9),
-			CarID:     rand.Intn(100) + 1,
+			CarID:     rand.Int31(),
 			CarNumber: generateRandomString(10),
 			DeviceID:  generateRandomString(15),
 			Extra:     generateRandomString(3),
 			EDT:       generateRandomDateTime(),
-			EID:       rand.Intn(3) + 1,
+			EID:       rand.Int31(),
 			Latitude:  generateRandomCoordinate(-90, 90),
 			Longitude: generateRandomCoordinate(-180, 180),
-			Head:      rand.Intn(360),
+			Head:      rand.Int31(),
 			Odo:       rand.Float64() * 1000000,
 			Alt:       rand.Float64() * 200,
 		}

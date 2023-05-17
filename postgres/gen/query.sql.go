@@ -7,6 +7,21 @@ package gen
 
 import ()
 
+type InsertLocationsParams struct {
+	MessageID string
+	CarID     int32
+	Carnumber string
+	DeviceID  string
+	Extra     string
+	Edt       string
+	Eid       int32
+	Latitude  float64
+	Longitude float64
+	Head      int32
+	Odo       float64
+	Alt       float64
+}
+
 type InsertTripsParams struct {
 	TripID            string
 	CarID             int32

@@ -21,20 +21,20 @@ type FetchLocationResponse struct {
 
 type LocationData struct {
 	MessageID string  `json:"message_id"`
-	CarID     int     `json:"car_id"`
+	CarID     int32   `json:"car_id"`
 	CarNumber string  `json:"carnumber"`
 	DeviceID  string  `json:"device_id"`
 	Extra     string  `json:"extra"`
 	EDT       string  `json:"edt"`
-	EID       int     `json:"eid"`
+	EID       int32   `json:"eid"`
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
-	Head      int     `json:"head"`
+	Head      int32   `json:"head"`
 	Odo       float64 `json:"odo"`
 	Alt       float64 `json:"alt"`
 }
 
-func (c *Client) FetchLocation(ctx context.Context, req FetchLocationRequest) (*FetchLocationResponse, error) {
+func (c Client) FetchLocation(ctx context.Context, req FetchLocationRequest) (*FetchLocationResponse, error) {
 	buf, err := json.Marshal(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not marshal request")
