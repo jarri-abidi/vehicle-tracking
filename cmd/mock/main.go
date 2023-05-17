@@ -19,6 +19,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", NewMockServer())
+  
 	server := &http.Server{
 		Addr:    *addr,
 		Handler: mux,

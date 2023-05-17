@@ -42,7 +42,7 @@ type TripData struct {
 	TripDistanceNight int32   `json:"trip_distance_night"`
 }
 
-func (c *Client) FetchTrips(ctx context.Context, req FetchTripsRequest) (*FetchTripsResponse, error) {
+func (c Client) FetchTrips(ctx context.Context, req FetchTripsRequest) (*FetchTripsResponse, error) {
 	buf, err := json.Marshal(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not marshal request")
