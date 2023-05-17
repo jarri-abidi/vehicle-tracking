@@ -1,3 +1,4 @@
 secret.env
+postgres/gen/
 pgdata/
 metabase-data/
