@@ -1,0 +1,33 @@
+{
+  "cmd": "location",
+  "data": [
+    {
+      "message_id": "210458750",
+      "car_id": 12,
+      "carnumber": "51-131-73Isuzu",
+      "device_id": "357543057264812",
+      "extra": "1,2",
+      "edt": "2017-12-1108:07:08",
+      "eid": 1,
+      "latitude": 31.925358,
+      "longitude": 34.84861,
+      "head": 22,
+      "odo": 286767.862,
+      "alt": 110.9
+    },
+    {
+      "message_id": "213616244",
+      "car_id": 13,
+      "carnumber": "16-459-12new",
+      "device_id": "359006054807411",
+      "extra": "1,2",
+      "edt": "2017-12-2010:38:50",
+      "eid": 1,
+      "latitude": 32.16866,
+      "longitude": 34.87964,
+      "head": 29,
+      "odo": 227457.731,
+      "alt": 66
+    }
+  ]
+}

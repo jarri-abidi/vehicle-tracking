@@ -20,3 +20,18 @@ CREATE TABLE IF NOT EXISTS trips (
    trip_duration_night INTEGER NOT NULL,
    trip_distance_night INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS locations (
+   message_id VARCHAR(50) NOT NULL,
+   car_id INTEGER NOT NULL,
+   carnumber VARCHAR(50) NOT NULL,
+   device_id VARCHAR(50) NOT NULL,
+   extra VARCHAR(50) NOT NULL,
+   edt VARCHAR(50) NOT NULL,
+   eid INTEGER NOT NULL,
+   latitude FLOAT NOT NULL,
+   longitude FLOAT NOT NULL,
+   head INTEGER NOT NULL,
+   odo FLOAT NOT NULL,
+   alt FLOAT NOT NULL
+);

@@ -7,7 +7,7 @@ import (
 	"github.com/jarri-abidi/vehicle-tracking/postgres/gen"
 )
 
-func (r *Repository) StoreTrips(ctx context.Context, trips []karma.Trip) error {
+func (r *Repository) StoreTrips(ctx context.Context, trips []karma.TripData) error {
 	queries := gen.New(r.Conn)
 
 	args := make([]gen.InsertTripsParams, 0, len(trips))
