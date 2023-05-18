@@ -31,7 +31,7 @@ func (s *Service) SyncTrips(ctx context.Context) error {
 }
 
 func (s *Service) SyncLocations(ctx context.Context) error {
-	resp, err := s.client.FetchLocation(ctx, karma.FetchLocationRequest{Cmd: karma.CmdTrips})
+	resp, err := s.client.FetchLocation(ctx, karma.FetchLocationRequest{Cmd: karma.CmdLocation})
 	if err != nil {
 		return errors.Wrap(err, "could not fetch locations")
 	}
