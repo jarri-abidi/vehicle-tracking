@@ -21,10 +21,10 @@ type FetchTripsResponse struct {
 
 type TripData struct {
 	TripID            string  `json:"trip_id"`
-	CarID             int32   `json:"car_id"`
-	DriverID          int32   `json:"driver_id"`
-	CarNumber         string  `json:"car_number"`
-	DeviceID          string  `json:"device_id"`
+	CarID             int32   `json:"car_id"`     // const
+	DriverID          int32   `json:"driver_id"`  // const
+	CarNumber         string  `json:"car_number"` // const
+	DeviceID          string  `json:"device_id"`  // const
 	TripActive        int32   `json:"trip_active"`
 	StartMessageID    string  `json:"start_message_id"`
 	StartDate         string  `json:"start_date"`

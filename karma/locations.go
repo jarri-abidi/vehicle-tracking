@@ -21,12 +21,12 @@ type FetchLocationResponse struct {
 
 type LocationData struct {
 	MessageID string  `json:"message_id"`
-	CarID     int     `json:"car_id"`
-	CarNumber string  `json:"carnumber"`
-	DeviceID  string  `json:"device_id"`
+	CarID     int     `json:"car_id"`    // const
+	CarNumber string  `json:"carnumber"` // const
+	DeviceID  string  `json:"device_id"` // const
 	Extra     string  `json:"extra"`
 	EDT       string  `json:"edt"`
-	EID       int     `json:"eid"`
+	EID       int     `json:"eid"` // const
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Head      int     `json:"head"`

@@ -5,36 +5,49 @@ import (
 	"time"
 )
 
-func SampleTrips(numTrips int) []TripData {
+func SampleTrips(numTrips int32) []TripData {
 	trips := make([]TripData, 0)
 
 	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < numTrips; i++ {
-		trip := TripData{
-			TripID:            generateRandomString(7),
-			CarID:             12,
-			DriverID:          33,
-			CarNumber:         "My Car",
-			DeviceID:          generateRandomString(15),
-			TripActive:        0,
-			StartMessageID:    generateRandomString(9),
-			StartDate:         generateRandomDateTime(),
-			StartLatitude:     31.958073,
-			StartLongitude:    34.847893,
-			StartOdo:          356218.649,
-			StopMessageID:     generateRandomString(9),
-			StopDate:          generateRandomDateTime(),
-			StopLatitude:      31.830221,
-			StopLongitude:     35.236596,
-			StopOdo:           356319.582,
-			TripDuration:      rand.Int31n(200),
-			TripDistance:      rand.Float64() * 200,
-			TripDurationNight: 0,
-			TripDistanceNight: 0,
+	remaining := numTrips
+	for remaining > 0 {
+		car := generateCar()
+		numTripsForCar := generateRandomInt32(1) + 1
+
+		// generate trips for car and append to trips
+		for i := 0; i < int(numTripsForCar); i++ {
+			tripActive := 0
+			if i == int(numTripsForCar)-1 && numTripsForCar%2 == 0 {
+				tripActive = 1
+			}
+			trip := TripData{
+				TripID:            generateRandomString(7),
+				CarID:             car.CarID,
+				DriverID:          car.DriverID,
+				CarNumber:         car.CarNumber,
+				DeviceID:          car.DeviceID,
+				TripActive:        int32(tripActive),
+				StartMessageID:    generateRandomString(9),
+				StartDate:         generateRandomDateTime(),
+				StartLatitude:     31.958073,
+				StartLongitude:    34.847893,
+				StartOdo:          356218.649,
+				StopMessageID:     generateRandomString(9),
+				StopDate:          generateRandomDateTime(),
+				StopLatitude:      31.830221,
+				StopLongitude:     35.236596,
+				StopOdo:           356319.582,
+				TripDuration:      rand.Int31n(200),
+				TripDistance:      rand.Float64() * 200,
+				TripDurationNight: 0,
+				TripDistanceNight: 0,
+			}
+
+			trips = append(trips, trip)
 		}
 
-		trips = append(trips, trip)
+		remaining -= numTripsForCar
 	}
 
 	return trips
@@ -65,32 +78,4 @@ func SampleLocations(numLocations int) []LocationData {
 	}
 
 	return locations
-}
-
-func generateRandomString(length int) string {
-	charSet := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	charSetLength := len(charSet)
-	result := make([]byte, length)
-
-	for i := 0; i < length; i++ {
-		result[i] = charSet[rand.Intn(charSetLength)]
-	}
-
-	return string(result)
-}
-
-func generateRandomDateTime() string {
-	start := time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)
-	end := time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC)
-
-	delta := end.Sub(start)
-	randomDelta := time.Duration(rand.Int63n(int64(delta)))
-
-	randomTime := start.Add(randomDelta)
-
-	return randomTime.Format("2006-01-02 15:04:05")
-}
-
-func generateRandomCoordinate(min, max float64) float64 {
-	return rand.Float64()*(max-min) + min
 }
