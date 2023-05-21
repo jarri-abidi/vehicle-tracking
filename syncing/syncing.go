@@ -29,3 +29,16 @@ func (s *Service) SyncTrips(ctx context.Context) error {
 
 	return nil
 }
+
+func (s *Service) SyncLocations(ctx context.Context) error {
+	resp, err := s.client.FetchLocation(ctx, karma.FetchLocationRequest{Cmd: karma.CmdLocation})
+	if err != nil {
+		return errors.Wrap(err, "could not fetch locations")
+	}
+
+	if err := s.repository.StoreLocations(ctx, resp.Data); err != nil {
+		return errors.Wrap(err, "could not store locations")
+	}
+
+	return nil
+}

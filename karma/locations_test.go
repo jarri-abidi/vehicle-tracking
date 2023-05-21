@@ -17,6 +17,7 @@ import (
 func TestFetchLocation(t *testing.T) {
 	f, err := os.Open("testdata/location_sample.json")
 	require.NoError(t, err)
+	defer f.Close()
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var req karma.FetchLocationRequest
