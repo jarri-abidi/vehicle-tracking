@@ -15,12 +15,12 @@ func (r *Repository) StoreLocations(ctx context.Context, locations []karma.Locat
 	for _, location := range locations {
 		args = append(args, gen.InsertLocationsParams{
 			MessageID: location.MessageID,
-			CarID:     location.CarID,
+			CarID:     int32(location.CarID),
 			Carnumber: location.CarNumber,
 			DeviceID:  location.DeviceID,
 			Extra:     location.Extra,
 			Edt:       location.EDT,
-			Eid:       location.EID,
+			Eid:       int32(location.EID),
 			Latitude:  location.Latitude,
 			Longitude: location.Longitude,
 			Head:      location.Head,
