@@ -46,6 +46,10 @@ func generateRandomInt32(length int) int32 {
 	return rand.Int31n(max-min+1) + min
 }
 
+func generateRandomInt(length int) int {
+	return int(generateRandomInt32(length))
+}
+
 func pow(x, y int) int {
 	result := 1
 	for i := 0; i < y; i++ {

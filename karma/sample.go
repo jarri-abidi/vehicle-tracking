@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func SampleTrips(numTrips int32) []TripData {
+func SampleTrips(numTrips int) []TripData {
 	trips := make([]TripData, 0)
 
 	rand.Seed(time.Now().UnixNano())
@@ -13,14 +13,32 @@ func SampleTrips(numTrips int32) []TripData {
 	remaining := numTrips
 	for remaining > 0 {
 		car := generateCar()
-		numTripsForCar := generateRandomInt32(1) + 1
+		numTripsForCar := generateRandomInt(1) + 1
 
-		// generate trips for car and append to trips
-		for i := 0; i < int(numTripsForCar); i++ {
+		lastStartTime := time.Now()
+
+		for i := 0; i < numTripsForCar; i++ {
+
+			randomHour := time.Hour * time.Duration(generateRandomInt(2)+1)
+			endTime := lastStartTime.Add(-randomHour)
+			startTime := generateStartTripTime(endTime)
+			startDate := startTime.Format("2006-01-02 15:04:05")
+			stopDate := endTime.Format("2006-01-02 15:04:05")
+			lastStartTime = startTime
+
+			tripDuration := endTime.Sub(startTime)
+
+			startLoc := generateLocation()
+			endLoc := generateLocation()
+
+			tripDistance := calculateDistance(startLoc, endLoc)
+
 			tripActive := 0
-			if i == int(numTripsForCar)-1 && numTripsForCar%2 == 0 {
+			if i == 0 && numTripsForCar%2 == 0 {
 				tripActive = 1
+				stopDate = ""
 			}
+
 			trip := TripData{
 				TripID:            generateRandomString(7),
 				CarID:             car.CarID,
@@ -29,17 +47,17 @@ func SampleTrips(numTrips int32) []TripData {
 				DeviceID:          car.DeviceID,
 				TripActive:        int32(tripActive),
 				StartMessageID:    generateRandomString(9),
-				StartDate:         generateRandomDateTime(),
-				StartLatitude:     31.958073,
-				StartLongitude:    34.847893,
+				StartDate:         startDate,
+				StartLatitude:     startLoc.Latitude,
+				StartLongitude:    startLoc.Longitude,
 				StartOdo:          356218.649,
 				StopMessageID:     generateRandomString(9),
-				StopDate:          generateRandomDateTime(),
-				StopLatitude:      31.830221,
-				StopLongitude:     35.236596,
+				StopDate:          stopDate,
+				StopLatitude:      endLoc.Latitude,
+				StopLongitude:     endLoc.Longitude,
 				StopOdo:           356319.582,
-				TripDuration:      rand.Int31n(200),
-				TripDistance:      rand.Float64() * 200,
+				TripDuration:      int32(tripDuration.Minutes()),
+				TripDistance:      tripDistance,
 				TripDurationNight: 0,
 				TripDistanceNight: 0,
 			}
